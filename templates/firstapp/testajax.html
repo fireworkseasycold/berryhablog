@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <input type="text" id="d1"> +
+    <input type="text" id="d2"> =
+    <input type="text" id="d3">
+    <p>
+        <button id="btn">输入两个数字后点我</button>
+
+        提示：
+
+        $.ajaxSetup({
+            data:{csrfmiddlewaretoken:'{{ csrf_token }}'}
+        })
+        来解决ajax 的post请求,403Forbidden (CSRF token missing or incorrect.)
+
+        此外，ajax，添加data_Type:"jsonp" //指定为跨域访问
+    </p>
+
+    <script>
+        $.ajaxSetup({
+            data:{csrfmiddlewaretoken:'{{ csrf_token }}'}
+        })
+        // 先给按钮绑定一个点击事件
+        $('#btn').click(function () {
+            // 朝后端发送ajax请求
+            $.ajax({
+                // 1.指定朝哪个后端发送ajax请求
+                url:'', // 不写就是朝当前地址提交
+                // 2.请求方式
+                type:'post',  // 不指定默认就是get 都是小写
+                // 3.数据
+                // data: {1标签id:$('#1标签id').val(),2标签id:$('#2标签id').val()},
+                data:{'i1':$('#d1').val(),'i2':$('#d2').val()},
+                // 4.回调函数:当后端给你返回结果的时候会自动触发 args接受异步提交的后端的返回结果
+                success:function (args) {
+                    $('#d3').val(args)
+                    // 将异步回调函数的结果通过DOM操作渲染到第三个input框中-->
+                    // $(3标签id).val(data)
+                }
+            })
+        })
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,58 @@
+
+{% if request.session.userinfo %}
+                            <!--                            评论框-->
+                            <!--                        前端使用session判断是否已经登陆(我存的sessionkey为userinfo)-->
+                            <!-- Comment form-->
+                            <form class="mb-4">
+                                <textarea class="form-control" rows="3" placeholder="请发表评论!"></textarea>
+                                <!-- 提交按钮 -->
+                                <button type="submit" class="btn btn-primary">发送</button>
+                            </form>
+                            {% else %}
+<!--                            不存在则评论框修改为提醒登录-->
+                            <h5 class="mb-4">
+                                <a href="{% url 'users:login' %}">请登录</a>
+                            </h5>
+                            {% endif %}
+<!-- 显示评论 -->
+<!-- 不要漏了 load mptt_tags！ -->
+<h4 class="d-flex mb-4">共有{{ comments.count }}条评论</h4>
+                            {% for comment in comments %}
+                            <div class="d-flex mb-4">
+
+                                <!-- Parent comment-->
+                                <div class="flex-shrink-0"><img class="rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..." /></div>
+                                <div class="ms-3">
+                                    <div class="fw-bold"><strong style="color: pink">{{ comment.user }}</strong><span style="color: green">{{ comment.created|date:"Y-m-d H:i:s" }}</span></div>
+                                    {{ comment.body }}
+                                </div>
+                            </div>
+
+                            {% endfor %}
+
+
+                            <!-- 第二条-->
+                            <div class="d-flex">
+                                <div class="flex-shrink-0"><img class="rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..." /></div>
+                                <div class="ms-3">
+                                    <div class="fw-bold">父2</div>
+                                     写的不错
+                                    <!-- Child comment 1-->
+                                    <div class="d-flex mt-4">
+                                        <div class="flex-shrink-0"><img class="rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..." /></div>
+                                        <div class="ms-3">
+                                            <div class="fw-bold">子1</div>
+                                            看看再说
+                                        </div>
+                                    </div>
+                                    <!-- Child comment 2-->
+                                    <div class="d-flex mt-4">
+                                        <div class="flex-shrink-0"><img class="rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..." /></div>
+                                        <div class="ms-3">
+                                            <div class="fw-bold">子2</div>
+                                            还好吧
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+

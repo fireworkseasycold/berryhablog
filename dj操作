@@ -1,0 +1,63 @@
+基于conda虚拟环境和Windows
+
+django
+1.#创建项目
+django-admin startproject mysite
+#启动服务测试下
+python manage.py runserver 0:8000 这里ip:port指定只能本机使用127.0.0.1的8000端口访问，也可以为空
+
+2.#创建应用app名 例如users
+#django-admin startapp xxxx
+#python manage.py startapp firstapp
+python manage.py startapp users
+
+3.设计数据模型
+    views.py（修改后都需要执行4）
+    class 表名字
+   检查项：   settings是否设置好数据库（每天就新建数据库并且填好，见附1）和注册好app
+            写好urls
+            init.py里面导入pymysql模块，import pymysql，pymysql.install_as_MySQLdb()
+
+4.#数据库迁移
+python manage.py makemigrations #创建迁移文件，如果没修改会No changes detected
+python manage.py migrate 数据库迁移
+如果动了数据库，后期需要大修改表
+    到数据库把本app中的表都删掉
+    删除本app文件夹下的migrations目录内所有文件，除了__init__.py
+    在数据库中，找到django_migrations表，删除本app对应的记录；至此，就把之前的迁移记录都删掉了
+    重新迁移
+直接：注释掉原来的库类和路由视图函数，python manage.py makemigrations app
+                python manage.py migrate，会出现delete ...
+     修改好，重新迁移
+
+
+
+
+5.admin后台
+在admin中注册模型
+# users/admin.py
+from django.contrib import admin
+from . import models
+
+admin.site.register(models.viwes里的表名)
+
+6.创建超级管理员
+#初始化管理员admin账号密码
+python manage.py createsuperuser (需要先执行过python manage.py migrate)
+用户名gly
+密码glyluyue!@#
+http://127.0.0.1:8000/admin 后台
+
+附1：django修改settings
+更改settings:可参考https://www.cnblogs.com/brucezhang2017/articles/8408736.html
+
+附2：
+orm，操作mysql,增删改查（终端原生/models.py）,注意需要迁移同步，使其表映射到mysql，后面admin在后台注册模型
+路由（urls.py或者分发）
+视图views.py
+前端模板templates
+
+
+
+
+

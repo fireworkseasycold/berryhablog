@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}
+新建博客
+{% endblock %}
+{% block content %}
+<main class="bg">
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <!-- 提交文章的表单 -->
+            <form method="post" action="{% url 'blog:add_note' %}">
+                <!-- Django中需要POST数据的地方都必须有csrf_token -->
+                {% csrf_token %}
+<!--                &lt;!&ndash; 文章标题 &ndash;&gt;-->
+<!--                <div class="form-group">-->
+<!--                    &lt;!&ndash; 标签 &ndash;&gt;-->
+<!--                    <label for="title">文章标题</label>-->
+<!--                <label for="tags">标签</label>-->
+<!--        <input type="text" -->
+<!--               class="form-control col-3" -->
+<!--               id="tags" -->
+<!--               name="tags"-->
+<!--                    &lt;!&ndash; 文本框 &ndash;&gt;-->
+<!--                    <input type="text" class="form-control" id="title" name="title">-->
+<!--&lt;!&ndash;                <div class="form-group">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <label for="tag">文章标签</label>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <input type="text" class="form-control"  id="tag" name="tag">&ndash;&gt;-->
+<!--&lt;!&ndash;                </div>&ndash;&gt;-->
+<!--                </div>-->
+<!--                &lt;!&ndash; 文章正文 &ndash;&gt;-->
+<!--                <div class="form-group">-->
+<!--                    <label for="content">文章正文</label>-->
+<!--                    &lt;!&ndash; 文本区域 &ndash;&gt;-->
+<!--                    <textarea class="form-control" id="content" name="content" rows="12"></textarea>-->
+<!--                </div>-->
+<!--                多个标签使用用英文逗号进行分分隔-->
+                {{ note_post_form.media }}
+                <!-- Django后台自带的模板as_p 表示表单中每个需输入元素将被p标签包裹-->
+                {{ note_post_form.as_p }}
+
+                <!-- 提交按钮 -->
+                <button type="submit" class="btn btn-primary">完成</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+</main>
+
+
+{% endblock %}

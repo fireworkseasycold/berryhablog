@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% block title %}
+用户信息
+{% endblock %}
+
+{% block css %}
+<style>
+
+.bg{
+    background:url({% static '/img/usersinfo.jpg' %}) no-repeat center;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    background-size:cover;
+    font-size: 15px;
+}
+
+  .form-signin{
+    font-weight: var(--bs-body-font-weight);
+    line-height: var(--bs-body-line-height);
+    color: var(--bs-body-color);
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+    text-align: center!important;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 400px;
+    padding: 15px;
+    margin: auto;
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<main class="bg">
+
+<div class="form-signin">
+    <h1 class="h3 mb-3 fw-normal">用户信息</h1>
+<form action="{% url 'users:usersinfo' %}" method="post" enctype="multipart/form-data">
+
+{% csrf_token %}
+<!--usersdata.tx-->
+<img  class="img-fluid rounded-circle" src="/media/{{ usersdata.tx }}" alt="{{usersdata.tx}}" width='200' height='200' id="tx">
+<input type="file" class="form-control" name="tx" id="floatingTx" accept="image/*" onchange="changepic(this)">
+<div class="form-floating">
+<input type="text" class="form-control" id="floatingInput" placeholder="6位以下中英文数字组合" value="{{usersdata.username}}" name="username">
+<label for="floatingInput">用户名</label>
+</div>
+<div class="form-floating">
+<input type="text" class="form-control" id="floatingSex" placeholder="男或女" value="{{usersdata.sex}}" name="sex">
+<label for="floatingInput">性别</label>
+</div>
+<div class="form-floating">
+<input type="text" class="form-control" id="floatingPassword" placeholder="Password" value="{{usersdata.password}}" name="password">
+<label for="floatingPassword">密码</label>
+</div>
+<div class="form-floating">
+<input type="text" class="form-control" id="floatingEmail" placeholder="Email"  value="{{usersdata.email}}" name="email">
+<label for="floatingEmail">邮箱</label>
+</div>
+<div class="form-floating">
+<input type="text" class="form-control" id="floatingProfile" placeholder="Profile"  value="{{usersdata.profile}}" name="profile">
+<label for="floatingProfile">简介</label>
+</div>
+
+
+
+
+<button class="w-100 btn btn-lg btn-primary" type="submit">提交修改</button>
+<div>
+
+<a href="#" onclick="delete_user()">注销用户</a>
+<a href="C">刷新显示</a>
+<!--          <label>-->
+<!--        <a href="{% url 'camera:upload_img' %}">修改头像</a>-->
+<!--      </label>-->
+</div>
+</form>
+</div>
+
+
+
+</main>
+
+<script>
+//参考https://blog.csdn.net/weixin_38023551/article/details/78318532?spm=1001.2101.3001.6650.3&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7ECTRLIST%7Edefault-3-78318532-blog-117828046.pc_relevant_default&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7ECTRLIST%7Edefault-3-78318532-blog-117828046.pc_relevant_default&utm_relevant_index=4
+    //展示上传的图片 ,存在
+    //filereader 的方法
+    function changepic() {
+        var reads= new FileReader();
+        f=document.getElementById('floatingTx').files[0];
+        reads.readAsDataURL(f);
+        reads.onload=function (e) {
+            document.getElementById('tx').src=this.result;
+        };
+    }
+
+    //注销用户
+    function delete_user(){
+    //调用layer弹窗组件
+    layer.open({
+        //弹窗标题:
+        title:"确认删除",
+        //正文
+        content:"确认删除所有信息并注销吗",
+        yes:function(index,layero){
+        //前往指定url
+        location.herf='{% url 'users:delete_user' usersdata.id %}'
+        },
+    })
+    }
+
+</script>
+{% endblock %}

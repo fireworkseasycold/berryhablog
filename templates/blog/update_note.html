@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}
+更新博客
+{% endblock %}
+{% block content %}
+<main class="bg">
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <!-- 提交文章的表单 -->
+<!--            <form  id ="update_note" method="post" action="" onsubmit="update_note()">-->
+            <form  id ="update_note" method="post" action="">
+                <!-- Django中需要POST数据的地方都必须有csrf_token -->
+                {% csrf_token %}
+                {{ note_post_form.media }}
+                <!-- Django后台自带的模板as_p 表示表单中每个需输入元素将被p标签包裹-->
+                {{ note_post_form.as_p }}
+                <!-- 提交按钮 -->
+                <button type="submit" class="btn btn-primary">提交</button>
+            </form>
+        </div>
+    </div>
+</div>
+</main>
+
+<!--<script>-->
+<!--//手动指定formurl,绑定onsubmit再使用-->
+<!--var curRoute = window.location.href //获取当前页面路由-->
+
+<!--    function update_note()-->
+<!--    {-->
+<!--        document.update_note.action=curRoute-->
+<!--    }-->
+<!--</script>-->
+
+
+
+
+{% endblock %}

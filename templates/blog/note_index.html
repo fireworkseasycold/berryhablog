@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+{% block title %}
+博客主页
+{% endblock %}
+{% block content %}
+<div class="py-5 bg-light">
+    <div class="container px-5 my-5">
+        <div class="row gx-5 justify-content-center">
+            <div class="col-lg-10 col-xl-7">
+                <div class="text-center">
+                    <div class="fs-4 mb-4 fst-italic">一边写一边在丢弃。每个写字的人都象喜鹊，衔枝筑巢，常常会放弃旧地，另垒新窝。坚持是需要兴趣的，要你投入精力和心思。</div>
+                    <div class="d-flex align-items-center justify-content-center">
+                        <div class="fw-bold">
+                            真诚
+                            <span class="fw-bold text-primary mx-1">-</span>
+                            寄语
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Blog preview section-->
+<section class="py-5">
+    <div class="container px-5 my-5">
+        <div class="row gx-5 justify-content-center">
+            <div class="col-lg-8 col-xl-6">
+                <div class="text-center">
+                    <h2 class="fw-bolder">博客列表</h2>
+                    <p class="lead fw-normal text-muted mb-5">优美是一种感觉,是一种表层,要想理解,就得细细玩味。如果什么都直奔主题,那还有什么意思!文字可以简单,但不能经不起推敲。</p>
+                </div>
+            </div>
+        </div>
+<!--        最新/最热排序栏-->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{% url 'blog:note_index' %}?user={{ user }}&search={{ search }}&tag={{ tag }}">
+                        最新
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{% url 'blog:note_index' %}?user={{ user }}&order=click_num&search={{ search }}&tag={{ tag }}">
+                        最热
+                    </a>
+                </li>
+            </ol>
+        </nav>
+<!--        &lt;!&ndash; 搜索栏案例, 网页的header已有 &ndash;&gt;-->
+<!--        <div class="row">-->
+<!--            <div class="col-auto mr-auto">-->
+<!--                <form class="form-inline" >-->
+<!--                    <input type="text"-->
+<!--                        class="form-control mb-2 mr-sm-2"-->
+<!--                        name="search"-->
+<!--                        placeholder="搜索文章..."-->
+<!--                        required-->
+<!--                    >-->
+<!--                </form>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--文章显示-->
+        <div class="row gx-5">
+            <!--判断是否搜索-->
+            {% if search %}
+                {% if articles %}
+                <h4><span style="color: red">"{{ search }}"</span>的搜索结果如下：</h4>
+                    {% for article in articles %}
+                    <!--每个文章内容-->
+                    <div class="col-lg-4 mb-5">
+<!--&lt;!&ndash;                    <a href="{% url 'blog:note_detail' article.id %}" class="btn btn-primary">阅读文章</a>&ndash;&gt; 放入card h-100 shadow border-0块会失效-->
+                    <div class="card h-100 shadow border-0">
+<!--                        <img class="card-img-top" src="https://dummyimage.com/600x350/ced4da/6c757d" width="600" height="350" alt="note_img" />-->
+                        <img class="card-img-top" src="/media/{{article.note_img}}" width="600" height="200" alt="note_img" />
+                        <div class="card-body p-4">
+<!--                            标签-->
+                            {% if article.tags.all %}
+                            {% for tag in article.tags.all %}
+<!--                            这里href标签失效-->
+                                <a class="badge bg-secondary text-decoration-none link-light" href="{% url 'blog:note_index' %}?tag={{ tag }}">
+                                    {{ tag }}
+                                </a>
+                            {% endfor %}
+                            {% else %}
+                                <a class="badge bg-secondary text-decoration-none link-light" href="#!">无标签</a>
+                            {% endif %}
+<!--                            标题-->
+                            <a class="text-decoration-none link-dark stretched-link" href="{% url 'blog:note_detail' article.id %}"><h5 class="card-title mb-3">{{ article.title }}</h5></a>
+<!--                            正文-->
+                            <p class="card-text mb-0">{{ article.content|slice:'100' }}</p>
+                        </div>
+                        <div class="card-footer p-4 pt-0 bg-transparent border-top-0">
+                            <div class="d-flex align-items-end justify-content-between">
+                                <div class="d-flex align-items-center">
+<!--                                    <img class="rounded-circle me-3" src="https://dummyimage.com/40x40/ced4da/6c757d" width="40" height="40" alt="tx" />-->
+
+                                    <img class="rounded-circle me-3" src="/media/{{ article.user.tx }}" width="40" height="40" alt="tx" />
+                                    <div class="small">
+                                        <div class="fw-bold">{{ article.user.username }}</div>
+                                        <div class="text-muted">{{ article.update_time }}; {{ article.click_num }}阅读</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                    {% empty %}
+                    <h4><span style="color: red">文章加载失败</span></h4>
+                    {% endfor %}
+                {% else %}
+                <h4>暂无<span style="color: red">"{{ search }}"</span>有关的文章。</h4>
+                {% endif %}
+            {% else %}
+
+                {% if articles %}
+                    {% for article in articles %}
+                    <div class="col-lg-4 mb-5">
+<!--&lt;!&ndash;                    <a href="{% url 'blog:note_detail' article.id %}" class="btn btn-primary">阅读文章</a>&ndash;&gt; 放入card h-100 shadow border-0块会失效-->
+                    <div class="card h-100 shadow border-0">
+<!--                        <img class="card-img-top" src="https://dummyimage.com/600x350/ced4da/6c757d" width="600" height="350" alt="note_img" />-->
+                        <img class="card-img-top" src="/media/{{article.note_img}}" width="600" height="200" alt="note_img" />
+                        <div class="card-body p-4">
+<!--                            标签-->
+                            {% if article.tags.all %}
+                            {% for tag in article.tags.all %}
+<!--                            这里href标签失效-->
+                                <a class="badge bg-secondary text-decoration-none link-light" href="{% url 'blog:note_index' %}?tag={{ tag }}">
+                                    {{ tag }}
+                                </a>
+                            {% endfor %}
+                            {% else %}
+                                <a class="badge bg-secondary text-decoration-none link-light" href="#!">无标签</a>
+                            {% endif %}
+<!--                            标题-->
+                            <a class="text-decoration-none link-dark stretched-link" href="{% url 'blog:note_detail' article.id %}"><h5 class="card-title mb-3">{{ article.title }}</h5></a>
+<!--                            正文-->
+                            <p class="card-text mb-0">{{ article.content|slice:'100' }}</p>
+                        </div>
+                        <div class="card-footer p-4 pt-0 bg-transparent border-top-0">
+                            <div class="d-flex align-items-end justify-content-between">
+                                <div class="d-flex align-items-center">
+<!--                                    <img class="rounded-circle me-3" src="https://dummyimage.com/40x40/ced4da/6c757d" width="40" height="40" alt="tx" />-->
+
+                                    <img class="rounded-circle me-3" src="/media/{{ article.user.tx }}" width="40" height="40" alt="tx" />
+                                    <div class="small">
+                                        <div class="fw-bold">{{ article.user.username }}</div>
+                                        <div class="text-muted">{{ article.update_time }}; {{ article.click_num }}阅读</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                    {% empty %}
+                    <h4><span style="color: red">文章加载失败</span></h4>
+                    {% endfor %}
+                {% else %}
+                <h4>暂无<span style="color: red">没有文章</span></h4>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</section>
+    <!--页码导航 class m-auto设置居中-->
+<div class="pagination row m-auto">
+    <div class="m-auto">
+        <span class="step-links">
+
+<!--{# 分页功能 #}-->
+<!--{# 上一页功能,如果不是第一页,则显示上翻按钮 #}-->
+{% if articles.has_previous %}
+<a href="{% url 'blog:note_index' %}?page={{articles.previous_page_number }}&user={{ user }}&order={{ order }}&search={{ search }}&tag={{ tag }}" class="btn btn-secondary">
+&laquo;上一页
+</a>
+{% else %}
+<a href="{% url 'blog:note_index' %}?page=1&user={{ user }}&order={{ order }}&search={{ search }}&tag={{ tag }}" class="btn btn-secondary">
+首页
+</a>
+{% endif %}
+
+<!--            当前页面-->
+{% for p in articles.paginator.page_range %}
+{% if p == articles.number %}
+<span class="current btn btn-danger btn-lg">
+{{ p }}
+</span>
+{% endif %}
+{% endfor %}
+
+<!--{#下一页功能,如果不是最后一页,则显示下翻按钮#}-->
+{% if articles.has_next %}
+<a href="{% url 'blog:note_index' %}?page={{ articles.next_page_number }}&user={{ user }}&order={{ order }}&search={{ search }}&tag={{ tag }}" class="btn btn-secondary">
+    下一页&raquo;
+</a>
+{% else %}
+<a href="?page={{ articles.paginator.num_pages }}&user={{ user }}&order={{ order }}&search={{ search }}&tag={{ tag }}" class="btn btn-success">
+尾页
+</a>
+{% endif %}
+        </span>
+    </div>
+</div>
+{% endblock %}

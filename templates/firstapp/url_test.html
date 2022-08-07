@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>在模板里使用url反向解析</title>
+</head>
+<body>
+相对地址
+<p>注意相对地址开头带/，则为ip+端口+/相对地址；</p>
+<p>若不带斜杠则为地址栏里最后一个斜杠之前的所有+/写的相对地址</p>
+<br>
+使用url标签和反向解析
+<br>
+访问http://127.0.0.1:8000/ 别名home
+<br>
+<a href="{% url 'home' %}">url反向解析（无命名空间直接使用别名）</a>
+<br>
+<br>
+访问http://127.0.0.1:8000/firstapp/firstapp_index/  命名空间firstapp,别名fir
+<br>
+<a href="{% url 'firstapp:fir1' %}">url反向解析-命名空间：别名）</a>
+<br>
+<br>
+访问http://127.0.0.1:8000/firstapp/url_test2/100  命名空间firstapp,别名t2，参数age=100
+<br>
+<a href="{% url 'firstapp:t2' '100' %}">url反向解析-命名空间：别名 参数）</a>
+</body>
+</html>

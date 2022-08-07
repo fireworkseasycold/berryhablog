@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登陆后首页</title>
+</head>
+<body>
+{% csrf_token %}
+{% if request.session.userinfo %}
+    <p>
+        欢迎用户：{{ request.session.userinfo.username }}
+    </p>
+    <p>
+        <a href="{% url 'users:islogout' %}">退出登录</a>
+    </p>
+
+    <p>
+        <a href="{% url 'camera:upload_img' %}">上传或修改图片</a>
+    </p>
+    <p>
+        <a href="{% url 'camera:face_rec' %}">人脸识别</a>
+    </p>
+<!--        简单写法-->
+<!--    <p>-->
+<!--        <a href="/users/logout/">退出登录</a>-->
+<!--    </p>-->
+<!--    <p>-->
+<!--        <a href="/camera/upload_img">上传或修改图片</a>-->
+<!--    </p>-->
+
+{% else %}
+    {% if request.COOKIES.userinfo %}
+        <p>
+            欢迎用户：{{ request.COOKIES.userinfo.username }}
+        </p>
+        <p>
+            <a href="{% url 'users:islogout' %}">退出登录</a>
+        </p>
+        <p>
+            <a href="{% url 'camera:upload_img' %}">上传或修改图片</a>
+        </p>
+        <p>
+            <a href="{% url 'camera:face_rec' %}">人脸识别</a>
+        </p>
+    {% endif %}
+{% endif %}
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% load static %}
+    <title>页面渲染图片测试</title>
+</head>
+<body>
+<ul>
+     使用beforewords作为前后端约定的变量名，传递给前端的词是：{{beforewords}}
+    {%if fontend_a_img%}
+            <li>名字：{{ fontend_a_img.pic_name }},路径：{{ fontend_a_img.face_url }}</li>
+            <img src="/media/{{fontend_a_img.face_url}}" alt="{{fontend_a_img.pic_name}}" width='50' height='50' > <!-- 在浏览器显示图片 -->
+    {% endif %}
+    写法2
+    {%if fontend_face_imgs%}
+            <li>名字：{{ fontend_face_imgs.0.pic_name }},路径：{{ fontend_face_imgs.0.face_url }}</li>
+            <img src="/media/{{fontend_face_imgs.0.face_url}}" alt="{{fontend_face_imgs.0.pic_name}}" width='50' height='50' > <!-- 在浏览器显示图片 -->
+    {% endif %}
+
+</ul>
+</body>
+</html>

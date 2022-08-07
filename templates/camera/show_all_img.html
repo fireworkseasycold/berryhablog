@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% load static %}
+    <title>查看所有图片数据</title>
+</head>
+<body>
+<ul>
+    {%if fontend_face_imgs %}
+        {% for face_img in fontend_face_imgs %}
+            {% if forloop.first %}开始加载{% endif %}
+            <li>{{ forloop.counter }} 名字：{{ face_img.pic_name }},路径：{{ face_img.face_url }}</li>
+            <img src="/media/{{face_img.face_url}}" alt="{{face_img.pic_name}}" width='50' height='50' > <!-- 在浏览器显示图片 -->
+            {% if forloop.last %}已加载所有{% endif %}
+        {% empty %}
+            当前没有数据
+        {% endfor %}
+    {% else %}
+    不存在数据
+    {% endif %}
+</ul>
+<p>表格写法</p>
+{%if fontend_face_imgs %}
+<table border="1">
+    <tr>
+        <td>名字</td>
+        <td>路径</td>
+    </tr>
+    {% for face_img in fontend_face_imgs %}
+    <tr>
+        <td>{{ face_img.pic_name }}</td>
+        <td>{{ face_img.face_url }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
+</body>
+</html>

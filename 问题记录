@@ -1,0 +1,262 @@
+项目过程中的部分问题记录：
+1.路由问题：使用二级路由，路由分发后一直404？：
+解决：方法1app下的url文件缺少app_name='当前命名空间'，参考各app/urls.py 里的namespace=‘’
+方法2或者分发路由时将include第⼀个参数设置为元组类型，
+如path('firstapp/',include(('firstapp.urls','firstapp'),namespace='firstapp')),
+
+2.模板问题-templates文件夹下新建app文件夹放模板后找不到:参考firstapp俩主页对比
+    1.分包路由error
+    2.模板文件路径不对，比如templates/firstapp/,后端在使用时需要使用app名/模板.html;
+
+3.1  新建app users后执行python manage.py makemigrations出现
+ModuleNotFoundError: No module named 'users.urls'；
+或者'Specifying a namespace in include() without providing an app_name '
+django.core.exceptions.ImproperlyConfigured: Specifying a namespace in include() without providing an app_name
+is not supported. Set the app_name attribute in the included module, or pass a 2-tuple containing the list of p
+atterns and app_name instead.
+原因:路由分发有误，缺少app下的urls文件,使用了二级路由，并且urls内容不能为空；使用了命名空间但配置不对，可见主url的路由分发案例
+解决：新建add app_name = 'users' in  users/urls.py，二级路由的urls里需要填充命名空间，设置好路由和views
+for you set namespace = 'users' in project's url.py, when you haven't set it in users/urls.py,
+using project's url.py's path can not find users.urls in your include(('users.urls', 'users'), namespace='users')
+参考https://stackoverflow.com/questions/61580358/no-module-named-users-urls
+3.2  django.db.utils.OperationalError: (1060, "Duplicate column name
+自己在Mysql里修改过表结构，导致数据库与django不一致。
+执行以下命令解决（myapp换成自己的app名字）：
+python manage.py migrate myappname --fake
+3.3 上传图片时
+django.db.utils.OperationalError: (1054, "Unknown column 'user_id' in 'field list'")
+原因：中途加的外键,导致没有外键字段，直接在数据库中手动添加字段即可或者删除表，重新关联映射
+外键在映射数据模型之前先使用ForeignKey外键做好关联操作，
+然后在向数据库中映射数据模型，这样django会自动在关联表中添加 ：被关联表名称_id 这么一个字段
+参考：https://blog.csdn.net/qq_42778001/article/details/111824608
+3.4 python manage.py makemigrations可以顺利创建0001_initial.py文件，但继续执行python manage.py migrate时出现No migrations to apply报错。
+原因是因为在之间就已经执行过python manage.py migrate，在数据库表django_migrations中有之前的信息导致无法正常建表。
+解决方法：打开数据库表django_migrations 删除其中记录
+https://blog.csdn.net/sinat_33384251/article/details/109962333
+4.mysql数据库配置问题
+如果：RuntimeError: 'cryptography' package is required for sha256_password or caching_sha2_password auth methods
+解决：pip install cryptography #因为我是mysql8.0
+
+5.models.Usersdata.objects不提示并且报淡黄色
+以及create时候Note.objcets.create报错
+type object 'Note' has no attribute 'objcets'
+解决方法：
+在models里创建类时候添加
+objects = models.Manager()
+原因：或者使用s=Note(...) ,s.save()
+两者区别save() 方法要先update，（如果没有的话）再insert，而create()方法直接insert。
+
+
+6.表单提交返回错误
+404：html文件form里的action路由不对;url里没有/后缀;注意要完全一致
+500:html文件form里的action路由最后加/
+403：禁止访问 (403) CSRF验证失败. 请求被中断.
+三个方法
+{
+1.解决相应html文件form代码块中添加{% csrf_token %} ，注意放两个form里
+2.首先在应用views.py文件中导入该方法
+  from django.views.decorators.csrf import csrf_exempt
+  相应view视图函数位置添加该装饰器@csrf_exempt
+3.非安全方式将csrf中间件代码块注释掉
+}
+
+7.注册功能post后报错1062
+原因重复插入（唯一索引并发写入问题）表唯一约束的字段重复插入，例如username并发注册时会报
+解决方案使用try：。。。except Exception as e:
+
+8.mycal.html里 <option value="add" {%if op == 'add' %} selected {% endif %}>+</option>
+error:django.template.exceptions.TemplateSyntaxError: Could not parse the remainder: '=='add'' from '=='add''
+原因templates html{%if 变量名 判断符 条件%} 就是判断符左右两侧都要有空格
+我原来这样写时候pycharm会提示html里 ==和add中是红色下划线（提示标记开始未关闭），</option>还是黄色（结束标记与任何被人不匹配）
+搞得我还以为写错了一直改，然后没了警告和错误下划线后一直报这个错，被pycharm提示的错误坑惨了
+
+8.cookie设置删除报错
+delete_cookie() missing 1 required positional argument: 'key'
+原来代码：
+resp = HttpResponse('删除cookie-OK')
+HttpResponse.delete_cookie('gly')
+原因：需要HttpResponse.delete_cookie没有先实例化操作：改写为
+resp = HttpResponse('删除cookie-OK')
+resp.delete_cookie('gly')
+
+9.djangodebug问题
+pydev debugger: process 12204 is connecting
+Connected to pydev debugger (build 202.6397.98)
+Type 'manage.py help <subcommand>' for help on a specific subcommand.
+解决：需要配置pycharm-run-edit configurations-参数parameters添加runserver,点击apply,然后调试manage.py
+debug方法2：python manage.py shell 类似jupytr
+
+10.在camera的models导入users下的models时候报ValueError: attempted relative import beyond top-level package
+解决方案：1.直接使用'users.Usersdata'，即’app名.类名‘，注意带引号，此法不需要导入  或者2.mark项目目录为包再导入，可以理解为项目加__init__.py
+
+11.上传图片数据时候：django:multivaluedictkeyerror，原因：a_file=request.FILES('pic_u')，缺少了get方法
+    解决：改写为a_file=request.FILES.get('pic_u')‘
+    另外上传写法的区别，导致存入数据库的路径不同，model.save的写法不自动创建upload_to的子文件夹，并且是绝对路径，需要更多修改，个性化多时才用，否则不推荐
+
+
+
+13. 浏览器输入http://localhost:8000/media/uface/%E8%B5%B5%E4%B8%BD%E9%A2%96.jpeg
+想要访问media里的上传的图片
+报错TypeError: serve() got an unexpected keyword argument 'documents_root'
+原因：urlpatterns=+static(settings.MEDIA_URL,documents_root=settings.MEDIA_ROOT)写错了多加了s,应该是document_root
+
+14.html中img src不显示，先检查代码，发现是代码错误；如果代码无误还不显示
+如果html中使用{{ MEDIA_URL }}加载路径，还需要配置TEMPLATES：
+'django.template.context_processors.media'
+（我没用依旧正常显示）dj2.25
+
+15.uwsgi： anaconda search -t conda uswgi所以使用pip install uwsgi
+            AttributeError: module 'os' has no attribute 'uname'
+            因为uwsgiconfig.py文件中，os.uname()是不支持windows系统的，platform模块是支持任何系统。
+            下载uwsgi离线https://pypi.python.org/pypi/uWSGI/;修改uwsgiconfig.py文件中的os.uname()为platform.uname()
+            结果...win10不支持
+
+
+16.想要在上传后直接显示图片，原先使用redirect，并且传参,跳转至另一个render的函数
+    尝试：django直接单一使用redirect方法并不能像render方法一样给模板传递参数
+            可以采用cookie和session这两种方式来存储数据，然后在另一个视图进行读取，普通参数没问题，实际使用引起js数据传递的转化问题
+    TypeError: Object of type ‘type‘ is not JSON serializable
+    解决：直接return render,不使用redirect
+
+
+17.***上传图片后需要显示    后续：render content 404，图片数据未传递face_img，但是当face_img是数字和一堆图片时候又可以？？？
+    解决：修正参数后，最好重新加载一下pycharm
+
+
+18.尝试uwsgi：  用uWSGI网关接口替代runserver(runserver一般开发测试用)
+    配置uwsgi(失败了，官网也显示不支持win10)
+    - uwsgi为什么不直接把django部署到nginx 上，而是要用uwsgi服务器？
+            https://www.zhihu.com/question/61796809/answer/2350301642
+    尝试安装
+    定位到uwsgiconfig.py文件中，首先import platform后，将os.unam()都改为platform.uname()即可
+    报错：Exception: you need a C compiler to builduWSGI
+    解决：配置C编译环境 安装mingw:https://blog.csdn.net/m0_52733659/article/details/121527947 python setup.py install
+    虚拟环境下需要配置虚拟环境的环境变量
+    结果：修改多次编译安装失败compilation terminated.
+    windows建议放弃
+
+
+19.nginx
+    win10-下载http://nginx.org/en/download.html
+
+
+20.apache 教程https://www.likecs.com/show-204585502.html
+    下载：解压 cd /bin httpd -k install
+    Errors reported here must be corrected before the service can be started.
+    httpd: Syntax error on line 40 of F:/tools/apache/Apache24/conf/httpd.conf: ServerRoot must be a valid directory
+    netstat -a -o 查看端口占用情况 任务管理器查看对应进程
+    原因是80端口已经被nginx默认占用 打开Apache24/conf/httpd.conf修改端口82
+    ServerRoot默认为"/Apache24"（即任意盘的根目录），如果要将Apache24文件放在其他位置或更改文件夹名称，则就要相应地修改ServerRoot的值。
+    参考https://blog.csdn.net/ZXF_BW/article/details/117491290
+
+21.安装mod_wsgi  pip install mod_wsgi 这里是4.9.
+    RuntimeError: No Apache installation can be found. Set the MOD_WSGI_APACHE_ROOTDIR environment to its location.
+    设置MOD_WSGI_APACHE_ROOTDIR为apache24的安装目录F:\tools\apache\Apache24，
+    set "MOD_WSGI_APACHE_ROOTDIR=F:/tools/apache/Apache24" 设置临时环境变量
+    后续一大堆error...解决失败
+    故使用whl，https://www.lfd.uci.edu/~gohlke/pythonlibs/,下载对应的whl
+    pip install ...whl
+    Successfully installed mod-wsgi-4.7.1
+
+22.redis raise ConnectionError(self._error_message(e)) redis.exceptions.ConnectionError: Error 10061 connecting to localhost:6379. 由于目标计算机积极拒绝，无法连接。
+解决：redis未启动或者未安装，netstat -aon|findstr ”6379”查看端口情况
+
+23.Invalid block tag on line 5: 'loadstatic'. Did you forget to register or load this tag?
+解决：{% loadstatic %}改成{% load static %}
+
+24. login页面提交后500
+django项目登录并且记住用户名的时候出现
+UnicodeEncodeError: 'latin-1' codec can't encode characters in position 149-153: ordinal not in range(256)和AttributeError: 'NoneType' object has no attribute 'split'
+这个时候就是你的用户名是汉语，不是英文名，django框架编码问题
+File "F:\Anaconda3\envs\52project_face_recognition\lib\wsgiref\headers.py", line 142, in __bytes__
+    return str(self).encode('iso-8859-1')
+需要打开headers.py，将编码改为utf-8
+def __bytes__(self):
+    #return str(self).encode('iso-8859-1')
+    return str(self).encode('utf-8')
+原文链接：https://blog.csdn.net/u014535666/article/details/101166856
+或者：。。。意外发现这么写也可以不报错，虽然实际错误
+原因：<input type="checkbox" name="remember">记住用户名的remember
+解决：if 'remember' in request.POST:改写为remember>
+
+25.django.template.exceptions.TemplateSyntaxError: Could not parse the remainder: '[0]' from 'request.session.userinfo[0]'
+原因：<P>欢迎 用户：{{ request.session.userinfo[0] }}</P>写法错
+解决：<P>欢迎 用户：{{ request.session.userinfo.0 }}</P>
+参考https://stackoverflow.com/questions/19895894/could-not-parse-the-remainder-0-from-item0-django
+
+26.django导入自定义模块my_tool里的内容
+from ..tools.mytool improt * 报错ValueError: attempted relative import beyond top-level package
+解决：改为from tools.my_tool import * #这里tools红色警告不是错误,tools为包（__init__.py）
+其他一些写法也是报错，建议不要使用相对目录，容易导致运行出错
+参考补充知识：参考https://cloud.tencent.com/developer/article/1730383
+当import独立于django项目文件夹以外文件夹里面的东西时的方法，如果希望import apps文件夹里面的message时有两种方法：
+第一种：需要每一次都从根目录（即apps开始）填入：from apps.message import views。稍微麻烦。
+第二种：直接import message。首先将apps mark成source root，然后在需要引入的文件中添加from message import views.此时编辑器不会报错，但是在命令行中运行的时候，它会告诉你找不到message这个文件。所以最后还要在settings.py这个文件中将apps添加为根搜索路径
+
+
+27.AttributeError: 'QuerySet' object has no attribute 'fliter'
+原因：articles=Note.objects.all().fliter('user=uid') 是一个集合QuerySet
+解决：articles=Note.objects.filter('user=uid') #注意是filter
+
+28.You called this URL via POST, but the URL doesn't end in a slash and you have APPEND_SLASH set.
+ Django can't redirect to the slash URL while maintaining POST data.
+ Change your form to point to 127.0.0.1:8000/firstapp/test_upload/ (note the trailing slash), or set APPEND_SLASH=False in your Django settings.
+当upload文件时,比如firstapp里的test_upload和camera里的上传图片遇到上述错误
+原因:在于url最后的/;因为test_upload对应的url.py写了/结尾,而html的form里url没有/结尾,所以需要检查/要么两处都有要么都没有,比如camera里的上传图片都没有/结尾.
+
+29.DoesNotExist at /camera/upload_img
+Face_img matching query does not exist.
+定位错误语句:face_img=Face_img.objects.get(user_id=uid)
+原因:使用get函数引起的错误。使用get方法时，当找不到匹配的query时，就会报DoesNotExist exception.
+解决:
+try:
+    Face_img.objects.get(user_id=uid):
+except Face_img.DoesNotExist:
+    face_img=Face_img()
+
+30.修改上传的图片时
+(1062, "Duplicate entry '28' for key 'face_pic.user_id'")
+face_img=Face_img.objects.get(user_id=uid)
+face_img.update()
+原因:get()和save()一起使用修改单个
+解决:filter().update() 一起使用批量修改;不能混啊
+继续执行:TypeError: join() argument must be str or bytes, not 'ImageFieldFile'
+原因:path = os.path.join(settings.MEDIA_ROOT,face_img.face_url)
+解决:path = os.path.join(settings.MEDIA_ROOT,str(face_img.face_url))
+
+31.F:\pythonpic52projects\52projects\16.djangobetter\mysite\blog\views.py:139: UnorderedObjectListWarning: Pagination may yield inconsistent results with an unordered object_list:
+<class 'blog.models.Note'> QuerySet.
+  paginator = Paginator(articles, 3) #这里才发数据
+原因：这个错误是在使用Django的DRF框架编写接口时，配置了分页之后出现的分页警告，仅是警告而已，不影响正常运行，想要解决：排序
+解决方案一： 在模型处配置排序
+class XXXXX(models.Model):		# XXXXX为自定义
+	name = models.CharField(max_length=100, verbose_name="名称")
+	class Meta:
+	db_table = ‘XXX’
+	verbose_name = ‘XXXX’
+	verbose_name_plural = verbose_name
+	ordering = ['id']		# 配置排序
+解决方案:二： 在视图中需要查询的地方加上排序
+queryset = models.XXXXX.objects.filter(name="张三").order_by("id")
+
+31.路由拼接的异常：从最后一个/开始往后拼接
+访问http://127.0.0.1:8000/users/usersinfo/
+<!--<form action="{% url "users:usersinfo" %}" method="post">-->
+<!--<form action="users/usersinfo" method="post">--> #404 http://127.0.0.1:8000/users/usersinfo/users/usersinfo
+<form action="/users/usersinfo" method="post">#RuntimeError at /users/usersinfo
+You called this URL via POST, but the URL doesn't end in a slash and you have APPEND_SLASH set. Django can't redirect to the slash URL while maintaining POST data. Change your form to point to 127.0.0.1:8000/users/usersinfo/ (note the trailing slash), or set APPEND_SLASH=False in your Django settings.
+<!--<form action="users/usersinfo/" method="post">--> #404 http://127.0.0.1:8000/users/usersinfo/users/usersinfo/
+<!--<form action="/users/usersinfo/" method="post">-->
+
+32.表单 post 报错MultiValueDictKeyError
+原因：request.POST[‘username’]与request.POST.get(‘username’)
+但是如果传递过来的数值为空，那么request.POST[‘username’]则会提示Keyerror错误，而request.POST.get(‘username’)则不会报错，而是返回一个none。
+后续：原因是前端的表单里input type="text" disabled value="{{user.username}}" name="username">
+解决：有disabled属性，则为空，会一直报错，所以去掉，disabled的文本输入框只能通过脚本进行修改value属性
+
+33.celery
+celery 4以上的版本不支持windows解决办法
+#https://www.kancloud.cn/studyforever/python_1/1884497
+https://blog.csdn.net/weixin_47513022/article/details/119903492
+pip install eventlet
+celery worker -A celery_task   -l info -P eventlet

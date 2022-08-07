@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+
+{% block title %}
+主页
+{% endblock %}
+
+{% block content %}
+<!-- Page Content-->
+<section class="py-5" >
+    <div class="container px-5 my-5" >
+        <div class="row gx-5" >
+            <div class="col-lg-3">
+                <a href="{% url 'blog:note_index' %}?user={{ article.user.id }}">
+                <div class="d-flex align-items-center mt-lg-5 mb-4">
+<!--                    <img class="img-fluid rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..." />-->
+                    <img class="img-fluid rounded-circle" src="/media/{{ article.user.tx }}" width="50" height="50" alt="..." />
+                    <div class="ms-3">
+                        <div class="fw-bold">{{ article.user.username }}</div>
+                        <div class="text-muted">{{ article.user.profile }}</div>
+                    </div>
+                </div>
+                </a>
+            </div>
+            <div class="col-lg-9">
+                <!-- note content-->
+                <article>
+                    <!-- note header-->
+                    <header class="mb-4">
+                        <!-- note title-->
+                        <h1 class="fw-bolder mb-1">{{ article.title }}</h1>
+                        <!-- note meta content(更改时间)-->
+                        <div class="text-muted fst-italic mb-2">{{ article.update_time }}
+                            访问量：{{ article.click_num }}
+<!--                            点赞:{{ article.love_num }}
+ -->
+<!--                            <a href="#" onclick="confirm_delete()">删除文章</a>-->
+                            <a href="#" onclick="confirm_safe_delete()">删除文章</a>
+                            <a href="{% url 'blog:update_note' article.id %}">编辑文章</a>
+
+                            <!-- 新增一个隐藏的表单,用来post提交，保证安全删除,防止csrf攻击 -->
+                        <form
+                              style="display:none;"
+                              id="safe_delete"
+                              action="{% url 'blog:delete_note' article.id %}"
+                              method="POST"
+                              >
+                            {% csrf_token %}
+                            <button type="submit">发送</button>
+                        </form>
+                        </div>
+                        <!-- Post tags-->
+                        {% if article.tags.all %}
+                            {% for tag in article.tags.all %}
+                        <a class="badge bg-secondary text-decoration-none link-light" href="{% url 'blog:note_index' %}?tag={{ tag }}">{{tag}}</a>
+                            {% endfor %}
+                        {% else %}
+                            <a class="badge bg-secondary text-decoration-none link-light" href="#!">无标签</a>
+                        {% endif %}
+                    </header>
+
+                    <!-- Preview image figure-->
+<!--                                <figure class="mb-4"><img class="img-fluid rounded" src="https://dummyimage.com/900x400/ced4da/6c757d.jpg" alt="..." /></figure>-->
+                    <figure class="mb-4"><img class="img-fluid rounded" src="/media/{{article.note_img}}" alt={{article.note_img}} /></figure>
+                    <!-- Post content-->
+                    <div id="content" class="mb-5">
+                        <!--                        在 article.content 后加上 |safe 过滤器，来解决django会将输出的HTML代码进行转义的问题-->
+                    <textarea>{{article.content}}</textarea>
+                    </div>
+
+                </article>
+
+
+<!-- Comments section-->
+
+                <!--// 提交评论区域的div-->
+{% if request.session.userinfo %}
+<div class="form-group  mb-4">
+    {% csrf_token %}
+        <div id="commentform_title">发表评论</div>
+        <textarea class="form-control" rows="10" cols="60" id="comment_content"></textarea>
+        <p><button  type="submit" onclick="sendcom()">提交评论</button></p>
+</div>
+{% else %}
+<h5 class="row justify-content-center">
+    <a href="{% url 'users:login' %}">请登录后回复</a>
+</h5>
+<br>
+{% endif %}
+
+
+{% if comment_list %}
+<!--    //评论展示区域的div -->
+    <div class="comment_show">
+        <div class="feedback_area_title">评论列表</div>
+        <div class="comment_list">
+<!--            // 循环展示评论的数据-->
+            <h4>共有{{ comment_list.count }}条评论</h4>
+            {% for comment in comment_list %}
+                <div>
+                    <p>第{{ forloop.counter}}楼 -> By:{{ comment.comment_author.username }} -> {{ comment.comment_time }} ->
+                        <button class="reply" onclick="reply()" username={{ comment.comment_author.username }} pk={{ comment.pk }}>回复</button>
+                    </p>  {# 在此处定义一个回复按钮，用户实现子评论,并且自定义属性username和pk，用于下面回复功能的实现 #}
+                    {% if comment.pre_comment_id %}   {#判断评论是否有父级评论#}
+                        <p id="p">原评论内容：{{ comment.pre_comment.comment_content }}</p>  {#  如果有父级评论，则在中间显示父级评论的评论内容#}
+                    {% endif %}
+                    <p>{{ comment.comment_content }}</p> {# 评论内容 #}
+                    <hr>
+                </div>
+            {% endfor %}
+
+        </div>
+    </div>
+{% else %}
+没有评论
+{% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+
+<!--结束显示-->
+
+<script>
+    // 删除文章的函数
+    //function confirm_delete() {
+        // 调用layer弹窗组件
+        //layer.open({
+            // 弹窗标题
+            //title: "确认删除",
+            // 正文
+            //content: "确认删除这篇文章吗？",
+            // 点击确定按钮后调用的回调函数
+            //yes: function(index, layero) {
+                // 指定应当前往的 url
+                //location.href='{% url "blog:delete_note" article.id %}'
+            //},
+        //})
+    //}
+
+    //安全删除
+    function confirm_safe_delete() {
+    layer.open({
+        title: "确认删除",
+        content: "确认删除这篇文章吗？",
+        yes: function(index, layero) {
+            $('form#safe_delete button').click();
+            layer.close(index);
+        }
+    })
+}
+
+
+
+//{# 提交评论的JS，发送Ajax请求 #}
+
+
+//{# 提交评论按钮的点击事件 #}
+var pid = ""        //设置一个变量pid默认为空，用于后面作为数据库存储的父级评论的ID，如果没有父级评论则为空，子评论有父级评论
+function sendcom(){
+
+    $.ajax({
+        url: '/comment/comment_control/',
+        type: 'post',
+        data: {// 提交的数据内容data
+            comment_content: $("#comment_content").val(),
+            csrfmiddlewaretoken:'{{ csrf_token }}',
+            article_id: {{ article.id }},
+            pid: pid
+        },
+        success: function (res){            // 本例中返回的数据仅仅用于在控制台打印而已
+            //console.log(res)                //控制台打印返回的数据
+            $("#comment_content").val("")   //提交完成后，清空评论输入框的内容
+            pid = ""                        //子评论提交完成后，将pid默认设置为空，恢复为默认的父评论
+               //$(".comment_list").val(res)   //修改值
+            //$(".comment_list").html(res)   //刷新值
+            location.href='{% url "blog:note_detail" article.id %}'
+        }
+    })
+}
+
+{# 回复按钮的点击事件 #}
+function reply(){
+    $("#comment_content").focus()       //回复按钮的事件，点击时，将光标聚集到评论输入框中
+    var val = "@" + $('.reply').attr("username") + "\n"    //$(this)指代".reply"标签本身，获取这个标签的username值
+    $("#comment_content").val(val)      // 回复时，自动在输入框加入：@要回复的人
+    pid = $('.reply').attr("pk")            //当点击回复时，父评论ID不再为空，此时修改为：对应评论的主键值ID
+}
+
+</script>
+
+{% endblock %}

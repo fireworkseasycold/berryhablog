@@ -1,0 +1,5 @@
+apaceh关于mod_wsgi
+执行mod_wsgi-express module-config > a.txt,会得到下面三行，添加进httpd.conf
+LoadFile "f:/anaconda3/envs/52project_face_recognition/python36.dll"
+LoadModule wsgi_module "f:/anaconda3/envs/52project_face_recognition/lib/site-packages/mod_wsgi/server/mod_wsgi.cp36-win_amd64.pyd"
+WSGIPythonHome "f:/anaconda3/envs/52project_face_recognition"

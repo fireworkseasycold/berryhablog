@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% load static %}
+    <title>查看我的图片数据</title>
+</head>
+<body>
+    <ul>
+        {%if fontend_face_img%}
+            <li>名字：{{ fontend_face_img.pic_name }}</li>
+            <img src="/media/{{fontend_face_img.face_url}}" alt="{{fontend_face_img.pic_name}}" width='50' height='50' > <!-- 在浏览器显示图片使用django内置的模板语言dtl来写 -->
+        {% else %}
+            <li>未曾上传图片</li>
+        {% endif %}
+    </ul>
+    <p>
+        <a href="{% url 'camera:upload_img' %}">修改图片</a>
+    </p>
+</body>
+</html>

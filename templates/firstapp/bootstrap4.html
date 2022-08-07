@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    {% load static%}
+    <link rel="stylesheet" href="{% static "plugins/bootstrap-3.4.1/css/bootstrap.css" %}">
+
+</head>
+<body>
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">智能识别平台</a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+
+            <ul class="nav navbar-nav navbar-right">
+                <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown"
+                   aria-label="Open user menu">
+                    {%if fontend_face_img%}
+                    <li>{{ fontend_face_img.pic_name }}</li>
+                    <img class="rounded-circle mr-2" src="/media/{{fontend_face_img.face_url}}" height='50'>
+                    {% else %}
+                    <img class="rounded-circle mr-2" src="{% static "img/av.png" %}" width="30">
+                    {% endif %}
+                </a>
+
+                <li class="dropdown">
+
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false">{{users.name}}}<span class="caret"></span></a>
+
+                    <ul class="dropdown-menu">
+                        <li><a href="#">注册</a></li>
+                        <li><a href="#">登录</a></li>
+                        <li><a href="#">面证</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="#">登出</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!--要先引用jquery.min.js文件，然后再引用botstrap的js-->
+<script src="{% static "plugins/jq/jquery-3.6.0.min.js" %}"></script>
+<script src="{% static "plugins/bootstrap-3.4.1/js/bootstrap.min.js" %}"></script>
+
+</body>
+</html>

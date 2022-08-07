@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}
+主页
+{% endblock %}
+
+{% block content %}
+<div class="bg-light py-5">
+    <div class="container px-5">
+        <div class="row gx-5 align-items-center justify-content-center">
+            <div class="col-lg-8 col-xl-7 col-xxl-6">
+                <div class="my-5 text-center text-xl-start">
+                    <h1 class="display-5 fw-bolder text-dark mb-2">树莓博客网</h1>
+                    <p class="lead fw-normal text-dark-50 mb-4">一个多人博客站点</p>
+                    <div class="d-grid gap-3 d-sm-flex justify-content-sm-center justify-content-xl-start">
+                        <a class="btn btn-outline-dark btn-lg px-4 me-sm-3" href="{% url 'blog:add_note' %}">创作</a>
+                        <a class="btn btn-outline-dark btn-lg px-4" href="{% url 'users:reg' %}">注册</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-5 col-xxl-6 d-none d-xl-block text-center"><img class="img-fluid rounded-3 my-5" src="{% static '/img/index_1.gif' %}" alt="..." /></div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Blog preview section-->
+<section class="py-5">
+    <div class="container px-5 my-5">
+        <div class="row gx-5 justify-content-center">
+            <div class="col-lg-8 col-xl-6">
+                <div class="text-center">
+                    <h2 class="fw-bolder">每日推荐</h2>
+                    <p class="lead fw-normal text-muted mb-5">杂志上说，当你开始使用博客时，会发现，这世上总有几个人会专程去看你写的东西。</p>
+                </div>
+            </div>
+        </div>
+<!--        博客列表-->
+        <div class="row gx-5">
+            {% if articles %}
+                {% for article in articles %}
+                <div class="col-lg-4 mb-5">
+                    <div class="card h-100 shadow border-0">
+<!--                        <img class="card-img-top" src="https://dummyimage.com/600x350/ced4da/6c757d" width="600" height="350" alt="note_img" />-->
+                        <img class="card-img-top" src="/media/{{article.note_img}}" width="600" height="200" alt="note_img" />
+                        <div class="card-body p-4">
+<!--                            标签-->
+
+                            {% if article.tags.all %}
+                            {% for tag in article.tags.all %}
+<!--                            由于一些布局问题这里href点击跳转标签失效-->
+                                <a class="badge bg-secondary text-decoration-none link-light" href="{% url 'blog:note_index' %}?tag={{ tag }}">
+                                    {{ tag }}
+                                </a>
+                            {% endfor %}
+                            {% else %}
+                                <a class="badge bg-secondary text-decoration-none link-light" href="#!">无标签</a>
+                            {% endif %}
+<!--                            标题-->
+                            <a class="text-decoration-none link-dark stretched-link" href="{% url 'blog:note_detail' article.id %}"><h5 class="card-title mb-3">{{ article.title }}</h5></a>
+<!--                            正文-->
+                            <p class="card-text mb-0">{{ article.content|slice:'100' }}</p>
+                        </div>
+                        <div class="card-footer p-4 pt-0 bg-transparent border-top-0">
+                            <div class="d-flex align-items-end justify-content-between">
+                                <div class="d-flex align-items-center">
+<!--                                    <img class="rounded-circle me-3" src="https://dummyimage.com/40x40/ced4da/6c757d" width="40" height="40" alt="tx" />-->
+                                    <img class="rounded-circle me-3" src="/media/{{ article.user.tx }}" width="40" height="40" alt="tx" />
+                                    <div class="small">
+                                        <div class="fw-bold">{{ article.user.username }}</div>
+                                        <div class="text-muted">{{ article.update_time }}; {{ article.click_num }}阅读</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="{% url 'blog:note_detail' article.id %}" class="btn btn-primary">阅读文章</a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <h4><span style="color: red">文章加载失败</span></h4>
+                {% endfor %}
+            {% else %}
+            <h4><span style="color: red">没有文章</span></h4>
+            {% endif %}
+        </div>
+
+        <!-- Call to action-->
+    </div>
+</section>
+{% endblock %}
