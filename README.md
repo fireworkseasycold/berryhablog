@@ -10,6 +10,6 @@ pip install django2.2/3.2.14
 几个django插件
 pymsql
 等等
-
+预览：berryha.com
 
 
