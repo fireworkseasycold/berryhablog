@@ -10,13 +10,24 @@ set PYTHONIOENCODING=utf-8
 ERROR 1290 (HY000): The MySQL server is running with the --secure-file-priv option so it cannot execute this statement
 mysql语句查看secure_file_priv 对应的值
 show global variables like '%secure_file_priv%';
+my.ini:
+[mysqld]
+secure_file_priv =
 
 net stop mysql服务名
 net start mysql服务名
 
 
+
 导出指定表
 select * from taggit_tag into outfile 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/tag.txt';
 select * from taggit_taggeditem into outfile 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/tagitem.txt';
+
+
 导入load data [low_priority] [local] infile ‘file_name txt’ [replace | ignore]
-load data local infile 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/tag.txt' INTO TABLE taggit_tag CHARACTER SET utf8
+SHOW GLOBAL VARIABLES LIKE 'local_infile';
+SET GLOBAL local_infile = 'ON';
+load data local infile 'C:/myproject/berryhablog/tag.txt' INTO TABLE taggit_tag CHARACTER SET utf8
+load data local infile 'C:/myproject/berryhablog/tagitem.txt' INTO TABLE taggit_taggeditem
+解决LOAD DATA LOCAL INFILE file request rejected due to restrictions on access
+mysql -u root -p --local-infileMySQL/MySQL Server 8.0/Uploads/tag.txt' INTO TABLE taggit_tag CHARACTER SET utf8
