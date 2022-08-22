@@ -2,7 +2,7 @@
 
 
 
-[berryha.com](101.34.15.153)
+[berryha.com](http://101.34.15.153)
 
 ### 前后端不分离
 
@@ -65,7 +65,7 @@ mysql
 
 示例参考 berryha.com在文章详情页选择gly2的博客
 
-[树莓博客网](101.34.15.153)
+[树莓博客网](thhp://101.34.15.153)
 
 或者我的csdn   fireworkseasycold
 
