@@ -1,8 +1,8 @@
 # berryhablog
 
-[树莓博客网]: 101.34.15.153
 
 
+[berryha.com](101.34.15.153)
 
 ### 前后端不分离
 
@@ -65,8 +65,7 @@ mysql
 
 示例参考 berryha.com在文章详情页选择gly2的博客
 
-[www.berryha.com]: www.berryha.com
-ip:101.34.15.153
+[树莓博客网](101.34.15.153)
 
 或者我的csdn   fireworkseasycold
 
@@ -75,6 +74,4 @@ ip:101.34.15.153
 欢迎来信留言qq.com 1476094297@qq.com
 
 另外：欢迎小伙伴提供苏州python的后端工作机会
-
-
 
