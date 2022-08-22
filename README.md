@@ -65,7 +65,8 @@ mysql
 
 示例参考 berryha.com在文章详情页选择gly2的博客
 
-[berryha.com]: www.berryha.com
+[www.berryha.com]: www.berryha.com
+ip:101.34.15.153
 
 或者我的csdn   fireworkseasycold
 
