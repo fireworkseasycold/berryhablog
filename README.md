@@ -61,9 +61,9 @@ mysql
 
 如果需要linux部署的，安装uwsgi,替换modwsgi即可，本次是因为ubuntu虚拟机反应10s以上不得以使用windows。
 
+补充了虚拟主机配置
 
-
-示例参考 berryha.com在文章详情页选择gly2的博客
+例参考 berryha.com在文章详情页选择gly2的博客
 
 [树莓博客网](thhp://101.34.15.153)
 
