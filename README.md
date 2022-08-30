@@ -25,7 +25,7 @@ users blog comment
 
 包含登录注册头像修改信息重置密码注销，博客增删改查排序，文章标签，文章评论和回复等功能
 
-可以优化的点：不分离的话使用TemplateView，或者前端重写ajax并使用JsonResponse替换HttpResponse
+可以优化的点：不分离的话使用TemplateView，或者前端重写ajax并使用JsonResponse替换HttpResponse，目前只有评论部分使用了ajax和JsonResponse
 
 
 
