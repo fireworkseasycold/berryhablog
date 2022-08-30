@@ -124,17 +124,37 @@ def comment_control(request):
             comment_content = request.POST.get('comment_content')
             article_id = request.POST.get('article_id')
             pid = request.POST.get('pid')
+            print(f"pid:{pid}")
             # author_id = request.user.id  # 获取当前用户的ID
-            author_id=request.session.get('userinfo',False).get('uid',False)
+            author_id,author_name=request.session.get('userinfo',False).get('uid',False),request.session.get('userinfo',False).get('username',False)
             # author_id = request.session.userinfo.uid  # 获取当前用户的ID
 
-            Comment.objects.create(comment_content=comment_content, pre_comment_id=pid, article_id=article_id,
+            a_comment=Comment.objects.create(comment_content=comment_content, pre_comment_id=pid, article_id=article_id,
                                    comment_author_id=author_id)  # 将提交的数据保存到数据库中
+            if pid:
+                pre_comment_comment=Comment.objects.get(pk=pid).comment_content
+            else:
+                pre_comment_comment=None
+            comment_count=len(Comment.objects.filter(article_id=article_id))  #获取当前文章的评论长度
+            result={
+                'id':a_comment.pk,
+                'comment_content':a_comment.comment_content,
+                'pre_comment_id':a_comment.pre_comment_id,
+                'pre_comment_comment':pre_comment_comment,
+                'article_id':a_comment.article_id,
+                'comment_author_id':a_comment.comment_author_id,
+                'comment_author_name':author_name,
+                'comment_time':a_comment.comment_time,
+                'comment_count':comment_count
+            }
+            print(result)
 
-            comment_list = list(
-                Comment.objects.values('id', 'comment_content', 'pre_comment_id', 'article_id', 'comment_author_id',
-                                       'comment_time'))  # 以键值对的形式取出评论对象，并且转化为列表list类型article = list(
-            return JsonResponse(comment_list, safe=False)  # JsonResponse返回JSON字符串，自动序列化，如果不是字典类型，则需要添加safe参数为False
+            # comment_list = list(
+            #     Comment.objects.filter(article_id=article_id).values('id', 'comment_content', 'pre_comment_id', 'article_id', 'comment_author_id','comment_time')
+            # )  # 以键值对的形式取出评论对象，并且转化为列表list类型article = list()
+            # print(comment_list)  #这个写法取不到用户名，
+
+            return JsonResponse(result)  # JsonResponse返回JSON字符串，自动序列化，如果不是字典类型，则需要添加safe参数为False
 
         else:
             # return redirect('/user_login/')
