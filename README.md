@@ -53,7 +53,7 @@ mysql
 
 2.后端django-> apache（自行配置）
 
-3.nginx->apache
+3.nginx反向代理->apache
 
 未采用虚拟主机，有需要自己配置
 
