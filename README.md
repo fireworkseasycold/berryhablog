@@ -49,7 +49,7 @@ mysql
 
 动静分离
 
-1.静态html/static  ->nginx（自行配置）
+1.静态static/media  ->nginx（自行配置）
 
 2.后端django-> apache（自行配置）
 
