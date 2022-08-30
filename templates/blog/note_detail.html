@@ -88,31 +88,32 @@
 {% endif %}
 
 
-{% if comment_list %}
-<!--    //评论展示区域的div -->
-    <div class="comment_show">
-        <div class="feedback_area_title">评论列表</div>
-        <div class="comment_list">
-<!--            // 循环展示评论的数据-->
-            <h4>共有{{ comment_list.count }}条评论</h4>
-            {% for comment in comment_list %}
-                <div>
-                    <p>第{{ forloop.counter}}楼 -> By:{{ comment.comment_author.username }} -> {{ comment.comment_time }} ->
-                        <button class="reply" onclick="reply()" username={{ comment.comment_author.username }} pk={{ comment.pk }}>回复</button>
-                    </p>  {# 在此处定义一个回复按钮，用户实现子评论,并且自定义属性username和pk，用于下面回复功能的实现 #}
-                    {% if comment.pre_comment_id %}   {#判断评论是否有父级评论#}
-                        <p id="p">原评论内容：{{ comment.pre_comment.comment_content }}</p>  {#  如果有父级评论，则在中间显示父级评论的评论内容#}
-                    {% endif %}
-                    <p>{{ comment.comment_content }}</p> {# 评论内容 #}
-                    <hr>
-                </div>
-            {% endfor %}
+                <!--    //评论展示区域的div -->
+                <div class="comment_show">
+                    <div class="feedback_area_title">评论列表</div>
+                    <div class="comment_list">
+                        {% if comment_list %}
+                        <!--            // 循环展示评论的数据-->
+                        <h4 class="comment_n">共有{{ comment_list.count }}条评论</h4>
+                        {% for comment in comment_list %}
+                        <!--                <div>-->
+                        <p>第{{ forloop.counter}}楼 -> By:{{ comment.comment_author.username }} -> {{ comment.comment_time }} ->
+                            <button class="reply" onclick="reply()" username={{ comment.comment_author.username }} pk={{ comment.pk }}>回复</button>
+                        </p>
+                        {# 在此处定义一个回复按钮，用户实现子评论,并且自定义属性username和pk，用于下面回复功能的实现 #}
+                        {% if comment.pre_comment_id %} {#判断评论是否有父级评论#}
+                        <p id="p">原评论内容：{{ comment.pre_comment.comment_content }}</p> {# 如果有父级评论，则在中间显示父级评论的评论内容#}
+                        {% endif %}
+                        <p>{{ comment.comment_content }}</p> {# 评论内容 #}
+                        <hr>
+                        <!--                </div>-->
+                        {% endfor %}
 
-        </div>
-    </div>
-{% else %}
-没有评论
-{% endif %}
+                    </div>
+                </div>
+                {% else %}
+                <h4 class="comment_n">共有0条评论</h4>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -161,7 +162,6 @@
 //{# 提交评论按钮的点击事件 #}
 var pid = ""        //设置一个变量pid默认为空，用于后面作为数据库存储的父级评论的ID，如果没有父级评论则为空，子评论有父级评论
 function sendcom(){
-
     $.ajax({
         url: '/comment/comment_control/',
         type: 'post',
@@ -174,11 +174,26 @@ function sendcom(){
         success: function (res){            // 本例中返回的数据仅仅用于在控制台打印而已
             //console.log(res)                //控制台打印返回的数据
             $("#comment_content").val("")   //提交完成后，清空评论输入框的内容
-            pid = ""                        //子评论提交完成后，将pid默认设置为空，恢复为默认的父评论
-               //$(".comment_list").val(res)   //修改值
+            //alert(window.JSON.stringify(res))
+            //$(".comment_list").val(res)   //修改值
             //$(".comment_list").html(res)   //刷新值
-            location.href='{% url "blog:note_detail" article.id %}'
+            //location.href='{% url "blog:note_detail" article.id %}'<div>
+                        var list = ''
+            list=$('.comment_list').html()  //获取原来所有评论
+
+            list+='<p>第'+res.comment_count+'楼 -> By:'+res.comment_author_name+ '-> '+ res.comment_time +'->'
+            list+='<button class="reply" onclick="reply()" username=' + res.comment_author_name +' pk= '+res.pk+'>回复</button></p>'
+            res.pre_comment_id
+            if(res.pre_comment_id!=""){
+                list+='<p id="p">原评论内容：'+res.pre_comment_comment+'</p>'
+            }
+            list+='<p>'+res.comment_content+'</p><hr>'
+
+            $('.comment_list').html(list)
+            $(".comment_n").html('共有'+res.comment_count+'条评论') //修改评论个数  注意这上下两个修改div放一块，因为测试发现分开放会导致这句不生效
+            pid = ""                        //子评论提交完成后，将pid默认设置为空，恢复为默认的父评论
         }
+
     })
 }
 
