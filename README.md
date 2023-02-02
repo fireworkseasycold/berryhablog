@@ -65,13 +65,13 @@ mysql
 
 例参考 berryha.com在文章详情页选择gly2的博客
 
-[树莓博客网](thhp://101.34.15.153)
+[树莓博客网](thhp://berryha.com)
 
 或者我的csdn   fireworkseasycold
 
-本博客后续会进行优化，但更大可能是使用drf重写
+本博客后续会进行优化，待前端水平进阶后，将是使用drf重写。
 
 欢迎来信留言qq.com 1476094297@qq.com
 
 另外：欢迎小伙伴提供苏州python的后端工作机会
-
+北京时间2023：2：2苏州在职，python开发（外贸网站的后端开发（从0开始））+ 自动化爬虫（网红、品牌方数据，针对linkedin、noxinfluence、baijing等，）+数据库脚本以及运维（aliyuncentos）
