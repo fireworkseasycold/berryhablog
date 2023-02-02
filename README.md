@@ -74,4 +74,4 @@ mysql
 欢迎来信留言qq.com 1476094297@qq.com
 
 另外：欢迎小伙伴提供苏州python的后端工作机会
-北京时间2023：2：2 苏州担任在职的python开发（外贸网站的后端开发（从0开始）+ 部分前端）+ 自动化爬虫（针对linkedin国际版、noxinfluence、baijing等，）+数据库、运维（aliyun 美国centos），另外需要一个刚毕业水平的前端小弟。
+北京时间2023：2：2 苏州担任在职的python开发（外贸网站的后端开发（从0开始）+ 部分前端）+ 自动化爬虫（针对linkedin国际版、noxinfluence、baijing等，）+数据库、运维（aliyun 美国centos），另外需要一个刚毕业水平的前端小弟，前端能做的好看些。
