@@ -63,14 +63,6 @@ mysql
 
 补充了虚拟主机配置
 
-例参考 berryha.com在文章详情页选择gly2的博客
-
-[树莓博客网](thhp://berryha.com)
-
-或者我的csdn   fireworkseasycold
-
-本博客后续会进行优化，待前端水平进阶后，将是使用drf重写。
 
 欢迎来信留言qq.com 1476094297@qq.com
-
-润了润了
+已转WPF,For LIVE.
